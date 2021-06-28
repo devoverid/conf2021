@@ -78,8 +78,7 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeUnmount, onMounted, reactive, ref } from '@nuxtjs/composition-api'
-// import { toJpeg } from 'html-to-image';
-import { saveAsJpeg } from 'save-html-as-image';
+import { toJpeg } from 'html-to-image';
 
 export default defineComponent({
   setup() {
@@ -159,13 +158,12 @@ function useTicket() {
   // funcs
   const saveTicket = () => {
     if (ticketElm) {
-      saveAsJpeg(ticketElm, { filename: 'Ticket', printDate: true });
-      // toJpeg(ticketElm).then(function (dataUrl) {
-      //     var link = document.createElement('a')`;
-      //     link.download = 'ticket.jpeg';
-      //     link.href = dataUrl;
-      //     link.click();
-      //   });
+      toJpeg(ticketElm).then(function (dataUrl) {
+        var link = document.createElement('a');
+        link.download = 'ticket.jpeg';
+        link.href = dataUrl;
+        link.click();
+      });
     }
   }
 
