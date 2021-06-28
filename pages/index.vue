@@ -19,9 +19,9 @@
                 alt="Avatar"
               />
               <div class="profile-detail">
-                <div class="name">Alfian Dwi Nugraha</div>
+                <div class="name">YOUR NAME HERE</div>
                 <div class="username">
-                  <span>viandwi24</span>
+                  <span>GITHUB_USERNAME</span>
                 </div>
               </div>
             </div>
@@ -30,24 +30,7 @@
             </div>
           </div>
           <div class="ticket-number">
-            <div class="number"># 00001111XX</div>
-          </div>
-          <div class="ticket-hover">
-            <div>
-              <button
-                class="
-                  bg-blue-500
-                  hover:bg-blue-700
-                  text-white
-                  font-bold
-                  py-2
-                  px-4
-                  rounded
-                "
-              >
-                Save to computer
-              </button>
-            </div>
+            <div class="number"># 0XXXXX1</div>
           </div>
         </div>
       </div>
@@ -81,35 +64,115 @@
           <div></div>
         </label>
       </div>
+      <div class="actions text-center mt-4">
+        <button
+          class="bg-gray-800 hover:bg-gray-700 transition-all duration-200 text-white font-bold py-2 px-4 rounded"
+          @click="saveTicket"
+        >
+          Save to computer
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from '@nuxtjs/composition-api'
+import { defineComponent, onBeforeUnmount, onMounted, reactive, ref } from '@nuxtjs/composition-api'
+// import { toJpeg } from 'html-to-image';
+import { saveAsJpeg } from 'save-html-as-image';
 
 export default defineComponent({
   setup() {
     // vars
     const ticketStyle = ref('default')
+    const { initTicket, destroyTicket, saveTicket } = useTicket()
 
     // lifecyle
     onMounted(() => {
-      const ticketElm = document.getElementById('ticket')
-      if (ticketElm) {
-        const { x, y, width, height } = ticketElm.getBoundingClientRect()
-        const centerPoint = { x: x + width / 2, y: y + height / 2 }
-        window.addEventListener('mousemove', (e) => {
-          const degreeX = (e.clientY - centerPoint.y) * 0.008
-          const degreeY = (e.clientX - centerPoint.x) * -0.008
-          ticketElm.style.transform = `perspective(1000px) rotateX(${degreeX}deg) rotateY(${degreeY}deg)`
-        })
-      }
+      initTicket()
+    })
+    onBeforeUnmount(() => {
+      destroyTicket()
     })
 
+    // setup
     return {
       ticketStyle,
+      saveTicket,
     }
   },
 })
+
+function useTicket() {
+  // vars
+  let ticketElm: HTMLElement | null
+  const property = reactive({
+    perspective: 1000,
+    rotateX: 0,
+    rotateY: 0,
+    scaleX: 1,
+    scaleY: 1,
+  })
+
+  // lifecylce
+  const init = () => {
+    ticketElm = document.getElementById('ticket')
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('resize', onWindowResize)
+  }
+  const destroy = () => {
+    window.removeEventListener('mousemove', onMouseMove)
+    window.removeEventListener('resize', onWindowResize)
+  }
+
+  // on listen
+  const onMouseMove = function (e: { clientY: number; clientX: number }) {
+    if (ticketElm) {
+      const { x, y, width, height } = ticketElm.getBoundingClientRect()
+      const centerPoint = { x: x + width / 2, y: y + height / 2 }
+      property.rotateX = (e.clientY - centerPoint.y) * 0.008
+      property.rotateY = (e.clientX - centerPoint.x) * -0.008
+      changeStyle()
+    }
+  }
+  const onWindowResize = () => {
+    const ticketElm = document.getElementById('ticket')
+    if (ticketElm) {
+      const clientH = (window.innerHeight * 1) / 934
+      const clientW = (window.innerHeight * 1) / 934
+      // property.scaleX = clientW
+      // property.scaleY = clientH
+      changeStyle()
+    }
+  }
+
+  // listen
+  const changeStyle = () => {
+    if (ticketElm) {
+      ticketElm.style.transform = `perspective(${property.perspective}px) rotateX(${property.rotateX}deg) rotateY(${property.rotateY}deg) `
+      // if (ticketElm.parentElement) {
+      //   ticketElm.parentElement.style.transform = `scale(${property.scale})`
+      // }
+    }
+  }
+
+  // funcs
+  const saveTicket = () => {
+    if (ticketElm) {
+      saveAsJpeg(ticketElm, { filename: 'Ticket', printDate: true });
+      // toJpeg(ticketElm).then(function (dataUrl) {
+      //     var link = document.createElement('a')`;
+      //     link.download = 'ticket.jpeg';
+      //     link.href = dataUrl;
+      //     link.click();
+      //   });
+    }
+  }
+
+  return {
+    initTicket: init,
+    destroyTicket: destroy,
+    saveTicket,
+  }
+}
 </script>

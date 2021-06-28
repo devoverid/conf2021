@@ -17,10 +17,12 @@
     "@nuxtjs/tailwindcss": "^4.2.0",
     "autoprefixer": "^10.2.6",
     "core-js": "^3.9.1",
+    "html-to-image": "^1.6.2",
     "nuxt": "^2.15.3",
     "postcss": "^8.3.5",
     "sass": "^1.35.1",
     "sass-loader": "10",
+    "save-html-as-image": "^1.5.2",
     "tailwindcss": "^2.2.4"
   },
   "devDependencies": {

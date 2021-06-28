@@ -1,4 +1,7 @@
 # devover-conf-2021
+Devover Conference 2021 Create from Nuxt with Typescript.
+
+![Preview](https://github.com/devoverid/conf2021/blob/master/static/images/Preview.png?raw=true)
 
 ## Demo
 [Demo](https://devoverid.github.io/conf2021)
