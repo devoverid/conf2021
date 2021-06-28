@@ -9,28 +9,30 @@
     </div>
     <div class="content">
       <div class="title">Get your ticket!</div>
-      <div class="ticket-container">
-        <div id="ticket" class="ticket" :class="`${ticketStyle}`">
-          <div class="ticket-content">
-            <div class="ticket-profile">
-              <img
-                class="avatar"
-                src="https://github.com/viandwi24.png"
-                alt="Avatar"
-              />
-              <div class="profile-detail">
-                <div class="name">YOUR NAME HERE</div>
-                <div class="username">
-                  <span>GITHUB_USERNAME</span>
+      <div class="ticket-wrapper">
+        <div class="ticket-container">
+          <div id="ticket" class="ticket" :class="`${ticketStyle}`">
+            <div class="ticket-content">
+              <div class="ticket-profile">
+                <img
+                  class="avatar"
+                  src="https://github.com/viandwi24.png"
+                  alt="Avatar"
+                />
+                <div class="profile-detail">
+                  <div class="name">YOUR NAME HERE</div>
+                  <div class="username">
+                    <span>GITHUB_USERNAME</span>
+                  </div>
                 </div>
               </div>
+              <div class="ticket-footer">
+                <img src="images/Ticket Footer.png" />
+              </div>
             </div>
-            <div class="ticket-footer">
-              <img src="images/Ticket Footer.png" />
+            <div class="ticket-number">
+              <div class="number"># 0XXXXX1</div>
             </div>
-          </div>
-          <div class="ticket-number">
-            <div class="number"># 0XXXXX1</div>
           </div>
         </div>
       </div>
@@ -147,8 +149,8 @@ function useTicket() {
 
   // listen
   const changeStyle = () => {
-    if (ticketElm) {
-      ticketElm.style.transform = `perspective(${property.perspective}px) rotateX(${property.rotateX}deg) rotateY(${property.rotateY}deg) `
+    if (ticketElm && ticketElm.parentElement) {
+      ticketElm.parentElement.style.transform = `perspective(${property.perspective}px) rotateX(${property.rotateX}deg) rotateY(${property.rotateY}deg) `
       // if (ticketElm.parentElement) {
       //   ticketElm.parentElement.style.transform = `scale(${property.scale})`
       // }
@@ -158,11 +160,13 @@ function useTicket() {
   // funcs
   const saveTicket = () => {
     if (ticketElm) {
+      destroy()
       toJpeg(ticketElm).then(function (dataUrl) {
         var link = document.createElement('a');
         link.download = 'ticket.jpeg';
         link.href = dataUrl;
         link.click();
+        init()
       });
     }
   }
