@@ -2,6 +2,7 @@
 Devover Conference 2021 Create from Nuxt with Typescript.
 
 ![Preview](https://github.com/devoverid/conf2021/blob/master/static/images/Preview.png?raw=true)
+![Preview Ticket](https://github.com/devoverid/conf2021/blob/master/static/images/Preview%20Ticket.png?raw=true)
 
 ## Demo
 [Demo](https://devoverid.github.io/conf2021)
