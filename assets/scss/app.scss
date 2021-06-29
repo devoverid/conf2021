@@ -1,6 +1,7 @@
 // vars
 $primaryColor: #5170F1;
-$lightColor: #f5f5f5;
+$lightColor: #f7f7f7;
+$lightSecondaryColor: theme('colors.gray.200');
 
 //
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -39,7 +40,7 @@ $lightColor: #f5f5f5;
   }
 
   & > .content {
-    margin-top: .5rem;
+    margin: .5rem 0;
     flex: 1 1 0%;
     display: flex;
     align-self: center;
@@ -51,6 +52,14 @@ $lightColor: #f5f5f5;
       font-weight: 600;
       font-size: 50px;
       line-height: 80px;
+      display: block;
+      text-align: center;
+    }
+
+    & .description {
+      @apply text-2xl;
+      color: $lightSecondaryColor;
+      font-weight: 500;
       display: block;
       text-align: center;
     }
@@ -71,9 +80,12 @@ $lightColor: #f5f5f5;
           height: auto;
           border-radius: 15px;
           padding: 5px;
-          transition: all 300ms cubic-bezier(0.03, 0.98, 0.53, 0.99) 0s;
           transform-origin: top center;
           overflow: hidden;
+
+          &, * {
+            transition: all 300ms cubic-bezier(0.03, 0.98, 0.53, 0.99) 0s;
+          }
 
           &:hover + & > .ticket-hover {
             display: flex;
@@ -107,15 +119,15 @@ $lightColor: #f5f5f5;
             width: 50px;
             height: 100px;
             background: $primaryColor;
-            z-index: 4;
+            z-index: 5;
           }
 
           &::before {
-            left: -50px;
+            left: -51px;
           }
 
           &::after {
-            right: -50px;
+            right: -51px;
           }
 
           & > .ticket-content {
@@ -175,15 +187,15 @@ $lightColor: #f5f5f5;
               border-radius: 50%;
               background: $primaryColor;
               border: 5px solid $lightColor;
-              z-index: 3;
+              z-index: 6;
             }
 
             &::before {
-              left: -25px;
+              left: -27px;
             }
 
             &::after {
-              right: -25px;
+              right: -27px;
             }
           }
 
@@ -240,7 +252,25 @@ $lightColor: #f5f5f5;
               }
             }
           }
+        }
+      }
 
+      &.saved {
+        background: black;
+        width: calc(#{$ticketWidth} + 60px);
+        height: calc(#{$ticketHeight} + 50px);
+        & > .ticket-container {
+          & > .ticket {
+            border: 1px solid black;
+            & > .ticket-content {
+              &::before, &::after {
+                background: black;
+              }
+            }
+            &::before, &::after {
+              background: black;
+            }
+          }
         }
       }
 
@@ -262,6 +292,10 @@ $lightColor: #f5f5f5;
         margin-bottom: -5rem;
       }
     }
+  }
+
+  @media only screen and (max-height: 636px) {
+    overflow-y: auto;
   }
 }
 

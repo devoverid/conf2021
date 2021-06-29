@@ -5,6 +5,9 @@ export default {
   server: {
     host: '0.0.0.0',
   },
+  generate: {
+    dir: 'docs'
+  },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -35,6 +38,7 @@ export default {
     '@nuxt/typescript-build',
     '@nuxtjs/composition-api/module',
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/fontawesome',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -56,5 +60,13 @@ export default {
   // router
   router: {
     base: '/conf2021/',
+  },
+
+  // fontawesome
+  fontawesome: {
+    icons: {
+      solid: true,
+      brands: true
+    },
   },
 }

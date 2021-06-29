@@ -9,6 +9,9 @@
     </div>
     <div class="content">
       <div class="title">Get your ticket!</div>
+      <div class="description">
+        Generate a unique ticket with your GitHub profile.
+      </div>
       <div class="ticket-wrapper">
         <div class="ticket-container">
           <div id="ticket" class="ticket" :class="`${ticketStyle}`">
@@ -66,13 +69,10 @@
           <div></div>
         </label>
       </div>
-      <div class="actions text-center mt-4">
-        <button
-          class="bg-gray-800 hover:bg-gray-700 transition-all duration-200 text-white font-bold py-2 px-4 rounded"
-          @click="saveTicket"
-        >
-          Save to computer
-        </button>
+      <div class="actions grid grid-cols-3 gap-3 text-center mt-4">
+        <my-button text="Download" :icon="[ 'fas', 'download' ]" @click.native="saveTicket" />
+        <my-button text="Share on FB" :icon="[ 'fab', 'facebook' ]" @click.native="onDev" />
+        <my-button text="Tweet it!" :icon="[ 'fab', 'twitter' ]" @click.native="onDev" />
       </div>
     </div>
   </div>
@@ -81,8 +81,12 @@
 <script lang="ts">
 import { defineComponent, onBeforeUnmount, onMounted, reactive, ref } from '@nuxtjs/composition-api'
 import { toJpeg } from 'html-to-image';
+import myButton from '@/components/Button.vue'
 
 export default defineComponent({
+  components: {
+    myButton
+  },
   setup() {
     // vars
     const ticketStyle = ref('default')
@@ -96,9 +100,15 @@ export default defineComponent({
       destroyTicket()
     })
 
+    // methods
+    const onDev = () => {
+      alert('Not available in development version.')
+    }
+
     // setup
     return {
       ticketStyle,
+      onDev,
       saveTicket,
     }
   },
@@ -107,6 +117,7 @@ export default defineComponent({
 function useTicket() {
   // vars
   let ticketElm: HTMLElement | null
+  let ticketWrapperElm: HTMLElement | null | undefined
   const property = reactive({
     perspective: 1000,
     rotateX: 0,
@@ -118,6 +129,7 @@ function useTicket() {
   // lifecylce
   const init = () => {
     ticketElm = document.getElementById('ticket')
+    ticketWrapperElm = ticketElm?.parentElement?.parentElement
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('resize', onWindowResize)
   }
@@ -159,14 +171,19 @@ function useTicket() {
 
   // funcs
   const saveTicket = () => {
-    if (ticketElm) {
+    if (ticketWrapperElm && ticketElm && ticketElm.parentElement) {
+      ticketElm.parentElement.style.transform = 'none'
+      ticketWrapperElm.classList.add('saved')
       destroy()
-      toJpeg(ticketElm).then(function (dataUrl) {
+      toJpeg(ticketWrapperElm).then(function (dataUrl) {
         var link = document.createElement('a');
-        link.download = 'ticket.jpeg';
+        link.download = 'DevoverID-Conf2021-ticket.jpeg';
         link.href = dataUrl;
         link.click();
-        init()
+        if (ticketWrapperElm) {
+          ticketWrapperElm.classList.remove('saved')
+          init()
+        }
       });
     }
   }
