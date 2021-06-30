@@ -19,22 +19,24 @@
               <div class="ticket-profile">
                 <img
                   class="avatar"
-                  src="https://github.com/viandwi24.png"
+                  :src="ticketData.avatar_url"
                   alt="Avatar"
                 />
                 <div class="profile-detail">
-                  <div class="name">YOUR NAME HERE</div>
+                  <div class="name">{{ ticketData.name.toUpperCase() }}</div>
                   <div class="username">
-                    <span>GITHUB_USERNAME</span>
+                    <font-awesome-icon :icon="['fab', 'github']" class="self-center text-sm" />
+                    <span>{{ ticketData.username }}</span>
                   </div>
                 </div>
               </div>
               <div class="ticket-footer">
                 <img src="images/Ticket Footer.png" />
+                <!-- <img class="qrcode" src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" /> -->
               </div>
             </div>
             <div class="ticket-number">
-              <div class="number"># 0XXXXX1</div>
+              <div class="number">#{{ ticketId }}</div>
             </div>
           </div>
         </div>
@@ -69,7 +71,7 @@
           <div></div>
         </label>
       </div>
-      <div class="actions grid grid-cols-3 gap-3 text-center mt-4">
+      <div class="actions grid grid-cols-1 gap-3 mx-4 lg:grid lg:grid-cols-3 lg:gap-3 lg:mx-0 text-center mt-4">
         <my-button text="Download" :icon="[ 'fas', 'download' ]" @click.native="saveTicket" />
         <my-button text="Share on FB" :icon="[ 'fab', 'facebook' ]" @click.native="onDev" />
         <my-button text="Tweet it!" :icon="[ 'fab', 'twitter' ]" @click.native="onDev" />
@@ -79,18 +81,43 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, onMounted, reactive, ref } from '@nuxtjs/composition-api'
+import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref } from '@nuxtjs/composition-api'
 import { toJpeg } from 'html-to-image';
 import myButton from '@/components/Button.vue'
+
+const githubUser = require('github-api-user');
+const { initTicket, destroyTicket, saveTicket, ticketData, ticketId } = useTicket()
 
 export default defineComponent({
   components: {
     myButton
   },
+  async asyncData() {
+    let username: string | null = null
+    let user: { name: string, avatar_url: string }
+
+    const askUsername = async () => {
+      username = await prompt('Enter your GitHub username...', 'viandwi24')
+      try {
+        const result = await githubUser(username)
+        user = result
+        console.log(user)
+        if (user && username) {
+          ticketData.name = user.name
+          ticketData.avatar_url = user.avatar_url
+          ticketData.username = username
+        }
+      } catch (error) {
+        console.log(error)
+        alert('Username ga ada!')
+        await askUsername()
+      }
+    }
+    await askUsername()
+  },
   setup() {
     // vars
     const ticketStyle = ref('default')
-    const { initTicket, destroyTicket, saveTicket } = useTicket()
 
     // lifecyle
     onMounted(() => {
@@ -107,9 +134,11 @@ export default defineComponent({
 
     // setup
     return {
-      ticketStyle,
       onDev,
+      ticketStyle,
       saveTicket,
+      ticketData,
+      ticketId,
     }
   },
 })
@@ -124,6 +153,12 @@ function useTicket() {
     rotateY: 0,
     scaleX: 1,
     scaleY: 1,
+  })
+  const ticketData = reactive({
+    avatar_url: '',
+    name: 'YOUR NAME HERE',
+    username: 'viandwi24',
+    id: 177013
   })
 
   // lifecylce
@@ -162,7 +197,8 @@ function useTicket() {
   // listen
   const changeStyle = () => {
     if (ticketElm && ticketElm.parentElement) {
-      ticketElm.parentElement.style.transform = `perspective(${property.perspective}px) rotateX(${property.rotateX}deg) rotateY(${property.rotateY}deg) `
+      const tf = `perspective(${property.perspective}px) rotateX(${property.rotateX}deg) rotateY(${property.rotateY}deg) `
+      ticketElm.parentElement.style.transform = tf
       // if (ticketElm.parentElement) {
       //   ticketElm.parentElement.style.transform = `scale(${property.scale})`
       // }
@@ -187,11 +223,23 @@ function useTicket() {
       });
     }
   }
+  const ticketId = computed(() => {
+    const maxDigit = 7
+    const id = (typeof ticketData.id == 'string') ? ticketData.id : `${ticketData.id}`.toString()
+    let result = ''
+    for (let i = 0; i < (maxDigit - id.length); i++) {
+      result += '0'
+    }
+    result += id
+    return result
+  })
 
   return {
     initTicket: init,
     destroyTicket: destroy,
     saveTicket,
+    ticketData,
+    ticketId
   }
 }
 </script>

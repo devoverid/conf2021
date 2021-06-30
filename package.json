@@ -17,6 +17,7 @@
     "@nuxtjs/tailwindcss": "^4.2.0",
     "autoprefixer": "^10.2.6",
     "core-js": "^3.9.1",
+    "github-api-user": "^0.1.1",
     "html-to-image": "^1.6.2",
     "nuxt": "^2.15.3",
     "postcss": "^8.3.5",
